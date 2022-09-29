@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <forward_list>
 #include <vector>
+#include <iterator>
 
 namespace pr {
 	template<typename K, typename V>
@@ -13,14 +14,14 @@ namespace pr {
 				public:
 					const K key;
 					V val;
-					Entry(const K & key, V & val) : key(key), val(val) {}
+					Entry(const K & key, const V & val) : key(key), val(val) {}
 			};
 		private:
 			typedef std::vector<std::forward_list<Entry>> buckets_t;
 			buckets_t buckets;
 			size_t sz;
 		public:
-			HashMap(size_t size) : sz(0), buckets(sz) {}
+			HashMap(size_t size) : buckets(size), sz(0) {}
 			
 			V* get(const K & key) {
 				size_t h = std::hash<K>()(key);
@@ -49,6 +50,10 @@ namespace pr {
 			}
 
 			size_t size() const {return sz;}
+
+			const std::vector<std::forward_list<Entry>>& get_buckets() const {
+				return buckets;
+			}
 	};
 };
 
