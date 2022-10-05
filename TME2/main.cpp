@@ -169,6 +169,11 @@ int main () {
 		cout << "\tThe word \"" << text_words[i].first << "\" appears " << text_words[i].second;
 		cout << " times." << endl;
 	}
+
+	// ###########################################################################
+	// TME3 : test des fonctions count et count_if_equal
+	size_t c = all_words_bis.count(all_words_bis.begin(), all_words_bis.end());
+	std::cout << "There are " << c << " elements." << std::endl;
 	return 0;
 }
 

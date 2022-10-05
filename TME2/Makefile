@@ -3,6 +3,7 @@ CFLAGS = -Wall -Wextra -g -std=c++1y
 PROJECT = tme2
 
 SRC = main.cpp
+
 INCLUDE = hashmap.hpp
 OBJ = $(patsubst %.cpp,%.o,$(SRC))
 
