@@ -9,8 +9,8 @@ OBJ = $(patsubst %.cpp,%.o,$(SRC))
 
 all: $(PROJECT)
 
-$(PROJECT): $(OBJ)
-	$(CC) -o $@ $(CFLAGS) $(INCLUDE) $^
+$(PROJECT): $(OBJ) $(INCLUDE)
+	$(CC) -o $@ $(CFLAGS) $^
 
 %.o: %.cpp
 	$(CC) -c $^ $(CFLAGS) -o $@
@@ -19,4 +19,4 @@ valgrind:
 	valgrind --leak-check=full $(PROJECT)
 
 clean:
-	rm $(OBJ) $(PROJECT)
+	rm $(OBJ)
