@@ -42,24 +42,40 @@ void worker(pr::Banque & bank)
 	}
 }
 
+void comptable(pr::Banque & bank)
+{
+	for(int i = 0; i < 10000; ++i)
+	{
+		if(!bank.comptabiliser(SOLDEINITIAL * NB_COMPTES)) {
+			std::cout << "thread comptable : ERREUR COMPTABLE !" << std::endl;
+		}
+		bank.reset_visite_compta();
+	}
+}
+
 int main () {
 	pr::Banque bank(NB_COMPTES, SOLDEINITIAL);
 	vector<thread> threads;
 
 	// TODO : creer des threads qui font ce qui est demandé
 	for(int i = 0; i < NB_THREAD; ++i) {
-		threads.emplace_back(worker, std::ref(bank));
+		if(i < NB_THREAD - 1) {
+			threads.emplace_back(worker, std::ref(bank));
+		}
+		else {
+			threads.emplace_back(comptable, std::ref(bank));
+		}
 	}
 
 	for (auto & t : threads) {
 		t.join();
 	}
 
-	// TODO : tester solde = NB_THREAD * JP
+	// TODO : tester solde = SOLDEINITIAL * NB_COMPTES
 	if(bank.comptabiliser(SOLDEINITIAL * NB_COMPTES)) {
-		std::cout << "ALL GOOD !" << std::endl;
+		std::cout << "main thread : COMPTA OK !" << std::endl;
 	} else {
-		std::cout << "NOT ALL GOOD !" << std::endl;
+		std::cout << "main thread : ERREUR COMPTABLE !" << std::endl;
 	}
 
 	return 0;
