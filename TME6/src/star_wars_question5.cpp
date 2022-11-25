@@ -6,7 +6,7 @@
 
 int lifebar = 3;
 
-void lightsaber(int sig)
+void handler(int sig)
 {
 	if(sig == SIGINT)
 	{
@@ -21,11 +21,16 @@ void lightsaber(int sig)
 	}
 }
 
+void luke_handler(int sig)
+{
+	std::cout << "coup paré !" << std::endl;
+}
+
 void attaque(pid_t adversaire)
 {
 	// if attacked by other process with SIGINT
 	// then decrement lifebar
-	std::signal(SIGINT, lightsaber);
+	std::signal(SIGINT, handler);
 
 	int status;
 	waitpid(adversaire, &status, WNOHANG);
@@ -48,15 +53,42 @@ void attaque(pid_t adversaire)
 void defense()
 {
 	std::signal(SIGINT, SIG_IGN);
-	// sleep for random duration
 	randsleep();
 }
 
-void combat(pid_t adversaire)
+void luke_defense()
+{
+	// SIGINT handler data for Luke
+	struct sigaction signal_action;
+	signal_action.sa_handler = luke_handler;
+	sigset_t sigset;
+	sigfillset(&sigset);
+	sigdelset(&sigset, SIGINT);
+	signal_action.sa_mask = sigset;
+	signal_action.sa_flags = 0;
+	sigset_t ctrlc;
+	sigemptyset(&ctrlc);
+	sigaddset(&ctrlc, SIGINT);
+	
+	sigaction(SIGINT, &signal_action, nullptr);
+	sigprocmask(SIG_BLOCK, &ctrlc, nullptr);
+	// sleep for random duration
+	randsleep();
+	sigsuspend(&sigset);
+}
+
+void combat(pid_t adversaire, bool is_luke)
 {
 	while(true)
 	{
-		defense();
+		if(is_luke)
+		{
+			luke_defense();
+		}
+		else
+		{
+			defense();
+		}
 		attaque(adversaire);
 	}
 }
@@ -64,17 +96,17 @@ void combat(pid_t adversaire)
 int main ()
 {
 	pid_t vader = getpid();
-	std::cout << "Vader PID = " << vader << std::endl;
+	std::cout << "Vader PID = " << vader << std::endl;	
 	pid_t luke = fork();
 	if(luke == 0)
 	{
 		srand(getpid());
-		combat(vader);
+		combat(vader, true);
 	}
 	else
 	{
 		srand(getpid());
-		combat(luke);
+		combat(luke, false);
 	}
 	return 0;
 }
