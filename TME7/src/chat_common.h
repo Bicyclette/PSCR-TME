@@ -28,8 +28,8 @@
 #define TAILLE_MESS 10
 
 struct message {
-  long type;
-  char content[TAILLE_MESS];
+  long type;					// 1 = connexion, 2 = diffusion de message, 3 = déconnexion
+  char content[TAILLE_MESS];	// identifiant du client ou contenu du message à diffuser
 };
 
 struct myshm {
