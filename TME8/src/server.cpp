@@ -42,12 +42,15 @@ int main() {
 			}
 			std::cout << "lu =" << lu << std::endl;
 
-			if (lu == 0) {
+			/*if (lu == 0) {
 				break;
-			}
+			}*/
 			lu++;
 			if (write(fd, &lu, msz) < msz) {
 				perror("write");
+				break;
+			}
+			if (lu == 0) {
 				break;
 			}
 			std::cout << "envoyé =" << lu << std::endl;

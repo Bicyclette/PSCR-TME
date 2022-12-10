@@ -48,7 +48,6 @@ int main0() {
 int main() {
 
 	pr::Socket sock;
-
 	sock.connect("localhost", 1664);
 
 	if (sock.isOpen()) {
